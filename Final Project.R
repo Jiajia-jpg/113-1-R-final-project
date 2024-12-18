@@ -9,3 +9,91 @@ df <- read_sheet(sheet_url)
 
 # View the data
 print(df)
+# Glimpse the structure of the data frame
+glimpse(df)
+library(tidyverse)
+
+# Read the Google Sheet (assuming df is already loaded)
+df <- df %>%
+  # Clean up column names by making them concise and using snake_case
+  rename(
+    year_roc       = 民國年,
+    school_type    = 學制,
+    total_schools  = `校數/總計【統計數值】`,
+    national_schools = `校數/國立【統計數值】`,
+    municipal_schools = `校數/市立【統計數值】`,
+    private_schools   = `校數/私立【統計數值】`
+  ) %>%
+  # Convert ROC year to Western year by adding 1911
+  mutate(year_western = year_roc + 1911) %>%
+  # Pivot district-specific columns to long format
+  pivot_longer(
+    cols = starts_with("校數/"),
+    names_to = "district",
+    values_to = "school_count",
+    names_pattern = "校數/(.*)"
+  ) %>%
+  # Convert district names to readable format
+  mutate(district = str_remove(district, "【統計數值】"))
+
+# View the cleaned and transformed data
+print(df)
+library(tidyverse)
+
+# Read and clean the data
+df_clean <- df %>%
+  # Rename ROC year column and simplify other column names
+  rename(
+    year_roc       = 民國年,
+    school_type    = 學制,
+    total_schools  = `校數/總計【統計數值】`,
+    national_schools = `校數/國立【統計數值】`,
+    municipal_schools = `校數/市立【統計數值】`,
+    private_schools   = `校數/私立【統計數值】`
+  ) %>%
+  # Convert ROC year to Western year
+  mutate(year_western = year_roc + 1911)
+
+# Summarize the school counts by school type
+school_summary <- df_clean %>%
+  select(school_type, total_schools, national_schools, municipal_schools, private_schools) %>%
+  group_by(school_type) %>%
+  summarise(
+    total = sum(total_schools, na.rm = TRUE),
+    national = sum(national_schools, na.rm = TRUE),
+    municipal = sum(municipal_schools, na.rm = TRUE),
+    private = sum(private_schools, na.rm = TRUE)
+  )
+
+# View the summarized data
+print(school_summary)
+
+library(tidyverse)
+
+# Read and clean the data
+df_clean <- df %>%
+  # Rename ROC year column and simplify other column names
+  rename(
+    year_roc          = `民國年`,
+    school_type       = `學制`,
+    total_schools     = `校數/總計【統計數值】`,
+    national_schools  = `校數/國立【統計數值】`,
+    municipal_schools = `校數/市立【統計數值】`,
+    private_schools   = `校數/私立【統計數值】`
+  ) %>%
+  # Convert ROC year to Western year
+  mutate(year_western = year_roc + 1911)
+
+# Summarize the school counts by school type
+school_summary <- df_clean %>%
+  select(school_type, total_schools, national_schools, municipal_schools, private_schools) %>%
+  group_by(school_type) %>%
+  summarise(
+    total = sum(total_schools, na.rm = TRUE),
+    national = sum(national_schools, na.rm = TRUE),
+    municipal = sum(municipal_schools, na.rm = TRUE),
+    private = sum(private_schools, na.rm = TRUE)
+  )
+
+# View the summarized data
+print(school_summary)
