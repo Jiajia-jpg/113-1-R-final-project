@@ -125,3 +125,34 @@ summary <- df %>%
   )
 
 print(summary)
+
+glimpse(df)
+
+df %>%
+  group_by(district) %>%
+  summarise(
+    total_schools = sum(school_count, na.rm = TRUE)
+  )
+df %>%
+  group_by(year_western, school_type) %>%
+  summarise(
+    total = sum(total_schools, na.rm = TRUE),
+    national = sum(national_schools, na.rm = TRUE),
+    municipal = sum(municipal_schools, na.rm = TRUE),
+    private = sum(private_schools, na.rm = TRUE)
+  )
+
+df %>%
+  group_by(district, school_type) %>%
+  summarise(
+    total_schools = sum(school_count, na.rm = TRUE)
+  )
+
+df %>%
+  group_by(district, school_type) %>%
+  summarise(total_schools = sum(school_count, na.rm = TRUE)) %>%
+  pivot_wider(names_from = school_type, values_from = total_schools, values_fill = 0)
+
+df %>%
+  summarise(across(where(is.numeric), ~ sum(.x, na.rm = TRUE)))
+
