@@ -97,3 +97,31 @@ school_summary <- df_clean %>%
 
 # View the summarized data
 print(school_summary)
+glimpse(string_df)
+
+library(tidyverse)
+
+# Extract city and district from taiwan_address
+df <- df %>%
+  mutate(
+    city = str_extract(taiwan_address, "^[^市]+市"),
+    district = str_extract(taiwan_address, "(?<=市)[^區]+區")
+  )
+
+# View the result
+print(df)
+
+# Filter rows where skill includes both "Python" and "R"
+df_python_r <- df %>%
+  filter(str_detect(skill, "Python") & str_detect(skill, "R"))
+
+print(df_python_r)
+
+# Count rows based on matches_pattern and from_taichung_city
+summary <- df %>%
+  summarise(
+    matches_pattern_count = sum(matches_pattern, na.rm = TRUE),
+    from_taichung_count = sum(from_taichung_city, na.rm = TRUE)
+  )
+
+print(summary)
